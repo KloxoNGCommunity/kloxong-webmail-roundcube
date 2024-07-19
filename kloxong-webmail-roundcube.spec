@@ -5,8 +5,8 @@
 
 Name: %{productname}-%{packagename}
 Summary: Roundcube webmail client
-Version: 1.4.2
-#Release: 1%{?dist}
+Version: 1.6.7
+
 Release: 1.kng%{?dist}
 License: GPL
 URL: http://www.roundcube.net/
@@ -43,12 +43,12 @@ folder manipulation, message searching and spell checking.
 %{__mkdir} -p -m0755 $RPM_BUILD_ROOT%{kloxo}/%{packagename}
 %{__cp} -rp * $RPM_BUILD_ROOT%{kloxo}/%{packagename}
 
-install -D -m 755 %{buildroot}/roundcube_db.inc.php $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_db.inc.php
-install -D -m 755 %{buildroot}/roundcube_main.inc.php $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_main.inc.php
-install -D -m 755 %{buildroot}/roundcube_mysql.initial.sql $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/SQL/roundcube_mysql.initial.sql
+install -D -m 755 %{SOURCE1} $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_db.inc.php
+install -D -m 755 %{SOURCE2} $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_main.inc.php
+install -D -m 755 %{SOURCE3} $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/SQL/roundcube_mysql.initial.sql
 #install -D -m 755 %{buildroot}/roundcube_mysql.update.sql $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/SQL/roundcube_mysql.update.sql
-install -D -m 755 %{buildroot}/roundcube_config.inc.php $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_config.inc.php
-install -D -m 755 %{buildroot}/roundcube_defaults.inc.php $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_defaults.inc.php
+install -D -m 755 %{SOURCE5} $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_config.inc.php
+install -D -m 755 %{SOURCE6} $RPM_BUILD_ROOT/home/kloxo/httpd/webmail/roundcube/config/roundcube_defaults.inc.php
 
 %clean
 %{__rm} -rf $RPM_BUILD_ROOT

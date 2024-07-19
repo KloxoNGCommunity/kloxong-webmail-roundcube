@@ -17,7 +17,7 @@
  +-----------------------------------------------------------------------+
 */
 
-$config = array();
+$config = [];
 
 // Database connection string (DSN) for read+write operations
 // Format (compatible with PEAR MDB2): db_provider://user:password@host/database
@@ -36,7 +36,7 @@ $config['db_dsnw'] = 'mysql://roundcube:roundcube@localhost/roundcubemail';
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %s - domain name after the '@' from e-mail address provided at login screen
 // For example %n = mail.domain.tld, %t = domain.tld
-$config['default_host'] = 'localhost';
+$config['default_host'] = 'localhost:143';
 
 // SMTP server host (for sending mails).
 // To use SSL/TLS connection, enter hostname with prefix ssl:// or tls://

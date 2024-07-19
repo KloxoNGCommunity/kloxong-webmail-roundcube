@@ -13,7 +13,7 @@
  +-----------------------------------------------------------------------+
 */
 
-$config = array();
+$config = [];
 
 // ----------------------------------
 // SQL DATABASE
@@ -44,12 +44,13 @@ $config['db_prefix'] = '';
 // Mapping of table names and connections to use for ALL operations.
 // This can be used in a setup with replicated databases and a DB master
 // where read/write access to cache tables should not go to master.
-$config['db_table_dsn'] = array(
+$config['db_table_dsn'] = [
 //    'cache' => 'r',
 //    'cache_index' => 'r',
 //    'cache_thread' => 'r',
 //    'cache_messages' => 'r',
-);
+];
+
 
 
 // ----------------------------------
@@ -65,6 +66,13 @@ $config['log_driver'] = 'file';
 // date format for log entries
 // (read http://php.net/manual/en/function.date.php for all format characters)  
 $config['log_date_format'] = 'd-M-Y H:i:s O';
+
+// length of the session ID to prepend each log line with
+// set to 0 to avoid session IDs being logged.
+$config['log_session_id'] = 8;
+
+// Default extension used for log file name
+$config['log_file_ext'] = '.log';
 
 // Syslog ident string to use, if using the 'syslog' log driver.
 $config['syslog_id'] = 'roundcube';
@@ -114,19 +122,25 @@ $config['smtp_debug'] = false;
 // For example %n = mail.domain.tld, %t = domain.tld
 // WARNING: After hostname change update of mail_host column in users table is
 //          required to match old user data records with the new host.
-$config['default_host'] = 'localhost';
-
-// TCP port used for IMAP connections
-$config['default_port'] = 143;
+$config['imap_host'] = 'localhost:143';
 
 // IMAP AUTH type (DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN or null to use
 // best server supported one)
 $config['imap_auth_type'] = null;
 
+// IMAP connection timeout, in seconds. Default: 0 (use default_socket_timeout)
+$config['imap_timeout'] = 0;
+
+// Optional IMAP authentication identifier to be used as authorization proxy
+$config['imap_auth_cid'] = null;
+
+// Optional IMAP authentication password to be used for imap_auth_cid
+$config['imap_auth_pw'] = null;
 // If you know your imap's folder delimiter, you can specify it here.
 // Otherwise it will be determined automatically
 $config['imap_delimiter'] = null;
 
+$config['imap_vendor'] = null;
 // If IMAP server doesn't support NAMESPACE extension, but you're
 // using shared folders or personal root folder is non-empty, you'll need to
 // set these options. All can be strings or arrays of strings.
@@ -153,21 +167,26 @@ $config['imap_force_lsub'] = false;
 // Enable this option to force listing of folders in all namespaces
 $config['imap_force_ns'] = false;
 
+// Some servers return hidden folders (name starting with a dot)
+// from user home directory. IMAP RFC does not forbid that.
+// Enable this option to hide them and disable possibility to create such.
+$config['imap_skip_hidden_folders'] = false;
+
+// Some servers do not support folders with both folders and messages inside
+// If your server supports that use true, if it does not, use false.
+// By default it will be determined automatically (once per user session).
+$config['imap_dual_use_folders'] = null;
+
 // List of disabled imap extensions.
 // Use if your IMAP server has broken implementation of some feature
 // and you can't remove it from CAPABILITY string on server-side.
 // For example UW-IMAP server has broken ESEARCH.
 // Note: Because the list is cached, re-login is required after change.
-$config['imap_disabled_caps'] = array();
+$config['imap_disabled_caps'] = [];
+// Log IMAP session identifiers after each IMAP login.
+// This is used to relate IMAP session with Roundcube user sessions
+$config['imap_log_session'] = false;
 
-// IMAP connection timeout, in seconds. Default: 0 (use default_socket_timeout)
-$config['imap_timeout'] = 0;
-
-// Optional IMAP authentication identifier to be used as authorization proxy
-$config['imap_auth_cid'] = null;
-
-// Optional IMAP authentication password to be used for imap_auth_cid
-$config['imap_auth_pw'] = null;
 
 // Type of IMAP indexes cache. Supported values: 'db', 'apc' and 'memcache'.
 $config['imap_cache'] = null;
@@ -200,11 +219,8 @@ $config['messages_cache_threshold'] = 50;
 // %d - domain (http hostname $_SERVER['HTTP_HOST'] without the first part)
 // %z - IMAP domain (IMAP hostname without the first part)
 // For example %n = mail.domain.tld, %t = domain.tld
-$config['smtp_server'] = '';
 
-// SMTP port (default is 25; use 587 for STARTTLS or 465 for the
-// deprecated SSL over SMTP (aka SMTPS))
-$config['smtp_port'] = 25;
+$config['smtp_host'] = 'localhost:587';
 
 // SMTP username (if required) if you use %u as the username Roundcube
 // will use the current username for login
@@ -216,13 +232,20 @@ $config['smtp_pass'] = '';
 
 // SMTP AUTH type (DIGEST-MD5, CRAM-MD5, LOGIN, PLAIN or empty to use
 // best server supported one)
-$config['smtp_auth_type'] = '';
+$config['smtp_auth_type'] = null;
 
 // Optional SMTP authentication identifier to be used as authorization proxy
 $config['smtp_auth_cid'] = null;
 
 // Optional SMTP authentication password to be used for smtp_auth_cid
 $config['smtp_auth_pw'] = null;
+
+// Pass the username (XCLIENT LOGIN) to the server
+$config['smtp_xclient_login'] = false;
+
+// Pass the remote IP (XCLIENT ADDR) to the server
+$config['smtp_xclient_addr'] = false;
+
 
 // SMTP HELO host 
 // Hostname to give to the remote server for SMTP 'HELO' or 'EHLO' messages 
@@ -267,11 +290,14 @@ $config['ldap_cache_ttl'] = '10m';
 $config['enable_installer'] = false;
 
 // don't allow these settings to be overriden by the user
-$config['dont_override'] = array();
+$config['dont_override'] = [];
+
+// List of disabled UI elements/actions
+$config['disabled_actions'] = [];
 
 // define which settings should be listed under the 'advanced' block
 // which is hidden by default
-$config['advanced_prefs'] = array();
+$config['advanced_prefs'] = [];
 
 // provide an URL where a user can get support for this Roundcube installation
 // PLEASE DO NOT LINK TO THE ROUNDCUBE.NET WEBSITE HERE!
@@ -345,6 +371,7 @@ $config['session_auth_name'] = null;
 // Session path. Defaults to PHP session.cookie_path setting.
 $config['session_path'] = null;
 
+$config['session_samesite'] = null;
 // Backend to use for session storage. Can either be 'db' (default), 'memcache' or 'php'
 // If set to 'memcache', a list of servers need to be specified in 'memcache_hosts'
 // Make sure the Memcache extension (http://pecl.php.net/package/memcache) version >= 2.0.0 is installed
@@ -404,9 +431,11 @@ $config['password_charset'] = 'ISO-8859-1';
 // How many seconds must pass between emails sent by a user
 $config['sendmail_delay'] = 0;
 
+$config['max_message_size'] = '100M';
 // Maximum number of recipients per message. Default: 0 (no limit)
 $config['max_recipients'] = 0; 
 
+$config['max_disclosed_recipients'] = 5;
 // Maximum allowednumber of members of an address group. Default: 0 (no limit)
 // If 'max_recipients' is set this value should be less or equal
 $config['max_group_members'] = 0; 
@@ -502,7 +531,7 @@ $config['no_save_sent_messages'] = false;
 // ----------------------------------
 
 // List of active plugins (in plugins/ directory)
-$config['plugins'] = array();
+$config['plugins'] = [];
 
 // ----------------------------------
 // USER INTERFACE
@@ -517,7 +546,7 @@ $config['message_sort_order'] = 'DESC';
 
 // These cols are shown in the message list. Available cols are:
 // subject, from, to, fromto, cc, replyto, date, size, status, flag, attachment, 'priority'
-$config['list_cols'] = array('subject', 'status', 'fromto', 'date', 'size', 'flag', 'attachment');
+$config['list_cols'] = ['subject', 'status', 'fromto', 'date', 'size', 'flag', 'attachment'];
 
 // the default locale setting (leave empty for auto-detection)
 // RFC1766 formatted language name like en_US, de_DE, de_CH, fr_FR, pt_BR
@@ -528,13 +557,13 @@ $config['date_format'] = 'Y-m-d';
 
 // give this choice of date formats to the user to select from
 // Note: do not use ambiguous formats like m/d/Y
-$config['date_formats'] = array('Y-m-d', 'Y/m/d', 'Y.m.d', 'd-m-Y', 'd/m/Y', 'd.m.Y', 'j.n.Y');
+$config['date_formats'] = ['Y-m-d', 'Y/m/d', 'Y.m.d', 'd-m-Y', 'd/m/Y', 'd.m.Y', 'j.n.Y'];
 
 // use this format for time display (date or strftime format)
 $config['time_format'] = 'H:i';
 
 // give this choice of time formats to the user to select from
-$config['time_formats'] = array('G:i', 'H:i', 'g:i a', 'h:i A');
+$config['time_formats'] = ['G:i', 'H:i', 'g:i a', 'h:i A'];
 
 // use this format for short date display (derived from date_format and time_format)
 $config['date_short'] = 'D H:i';
@@ -658,7 +687,7 @@ $config['address_book_type'] = 'sql';
 // In order to enable public ldap search, configure an array like the Verisign
 // example further below. if you would like to test, simply uncomment the example.
 // Array key must contain only safe characters, ie. a-zA-Z0-9_
-$config['ldap_public'] = array();
+$config['ldap_public'] = [];
 
 // If you are going to use LDAP for individual address books, you will need to 
 // set 'user_specific' to true and use the variables to generate the appropriate DNs to access it.
@@ -864,7 +893,11 @@ $config['addressbook_search_mode'] = 0;
 $config['default_charset'] = 'ISO-8859-1';
 
 // skin name: folder from skins/
-$config['skin'] = 'larry';
+$config['skin'] = 'elastic';
+
+// Limit skins available for the user.
+// Note: When not empty, it should include the default skin set in 'skin' option.
+$config['skins_allowed'] = [];
 
 // Enables using standard browser windows (that can be handled as tabs)
 // instead of popup windows
@@ -918,6 +951,11 @@ $config['draft_autosave'] = 300;
 
 // default setting if preview pane is enabled
 $config['preview_pane'] = false;
+// Interface layout. Default: 'widescreen'.
+//  'widescreen' - three columns
+//  'desktop'    - two columns, preview on bottom
+//  'list'       - two columns, no preview
+$config['layout'] = 'widescreen';
 
 // Mark as read when viewed in preview pane (delay in seconds)
 // Set to -1 if messages in preview pane should not be marked as read
@@ -961,6 +999,8 @@ $config['check_all_folders'] = false;
 // If true, after message delete/move, the next message will be displayed
 $config['display_next'] = true;
 
+// Default messages listing mode. One of 'threads' or 'list'.
+$config['default_list_mode'] = 'list';
 // 0 - Do not expand threads 
 // 1 - Expand all threads automatically 
 // 2 - Expand only threads with unread messages 
@@ -982,6 +1022,7 @@ $config['strip_existing_sig'] = true;
 // 3 - Forwards and Replies only
 $config['show_sig'] = 1;
 
+$config['sig_separator'] = true;
 // Use MIME encoding (quoted-printable) for 8bit characters in message body
 $config['force_7bit'] = false;
 
