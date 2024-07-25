@@ -1,5 +1,5 @@
 %define kloxo /home/kloxo/httpd/webmail
-%define productname kloxong-webmail
+%define productname kloxo-webmail
 %define packagename roundcube
 %define sourcename roundcubemail
 
@@ -7,7 +7,7 @@ Name: %{productname}-%{packagename}
 Summary: Roundcube webmail client
 Version: 1.6.7
 
-Release: 1.kng%{?dist}
+Release: 2.kng%{?dist}
 License: GPL
 URL: http://www.roundcube.net/
 Group: Applications/Internet
