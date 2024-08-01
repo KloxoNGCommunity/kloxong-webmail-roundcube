@@ -7,7 +7,7 @@ Name: %{productname}-%{packagename}
 Summary: Roundcube webmail client
 Version: 1.6.7
 
-Release: 2.kng%{?dist}
+Release: 3.kng%{?dist}
 License: GPL
 URL: http://www.roundcube.net/
 Group: Applications/Internet
